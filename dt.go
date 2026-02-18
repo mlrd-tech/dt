@@ -9,19 +9,19 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 )
 
-func Map(v ...any) map[string]types.AttributeValue {
+func M(v ...any) map[string]types.AttributeValue {
 	if len(v)%2 != 0 {
-		panic("dt.Map: odd number of inputs, must be even set of key-value pairs")
+		panic("dt.M: odd number of inputs, must be even set of key-value pairs")
 	}
 	m := map[string]types.AttributeValue{}
 	for i := 0; i < len(v); i += 2 {
 		key, ok := v[i].(string)
 		if !ok {
-			panic(fmt.Sprintf("dt.Map: v[%d] not a string: %v", i, v[i]))
+			panic(fmt.Sprintf("dt.M: v[%d] not a string: %v", i, v[i]))
 		}
 		val, ok := v[i+1].(types.AttributeValue)
 		if !ok {
-			panic(fmt.Sprintf("dt.Map: v[%d] not a types.AttributeValue: %v", i, v[i]))
+			panic(fmt.Sprintf("dt.M: v[%d] not a types.AttributeValue: %v", i+1, v[i+1]))
 		}
 		m[key] = val
 	}
@@ -70,10 +70,14 @@ func BS(bs ...[]byte) types.AttributeValue {
 	return &types.AttributeValueMemberBS{Value: bs}
 }
 
-func L(l ...types.AttributeValue) types.AttributeValue {
-	return &types.AttributeValueMemberL{Value: l}
-}
-
-func M(m map[string]types.AttributeValue) types.AttributeValue {
-	return &types.AttributeValueMemberM{Value: m}
+func L(l ...any) types.AttributeValue {
+	vals := make([]types.AttributeValue, len(l))
+	for i, v := range l {
+		av, ok := v.(types.AttributeValue)
+		if !ok {
+			panic(fmt.Sprintf("dt.L: l[%d] not a types.AttributeValue: %v", i, v))
+		}
+		vals[i] = av
+	}
+	return &types.AttributeValueMemberL{Value: vals}
 }

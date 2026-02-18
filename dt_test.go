@@ -12,7 +12,7 @@ import (
 	"github.com/mlrd-tech/dt"
 )
 
-func TestMap(t *testing.T) {
+func TestM(t *testing.T) {
 	testcases := []struct {
 		in  []any
 		out map[string]types.AttributeValue
@@ -38,7 +38,7 @@ func TestMap(t *testing.T) {
 	}
 
 	for _, tc := range testcases {
-		got := dt.Map(tc.in...)
+		got := dt.M(tc.in...)
 		if diff := deep.Equal(got, tc.out); diff != nil {
 			t.Error(diff)
 		}
@@ -221,19 +221,3 @@ func TestL(t *testing.T) {
 	}
 }
 
-func TestM(t *testing.T) {
-	input := map[string]types.AttributeValue{
-		"name": dt.S("John"),
-		"age":  dt.N("30"),
-	}
-	got := dt.M(input)
-	want := &types.AttributeValueMemberM{
-		Value: map[string]types.AttributeValue{
-			"name": &types.AttributeValueMemberS{Value: "John"},
-			"age":  &types.AttributeValueMemberN{Value: "30"},
-		},
-	}
-	if diff := deep.Equal(got, want); diff != nil {
-		t.Error(diff)
-	}
-}
