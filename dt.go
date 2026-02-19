@@ -15,13 +15,17 @@ func M(v ...any) map[string]types.AttributeValue {
 	}
 	m := map[string]types.AttributeValue{}
 	for i := 0; i < len(v); i += 2 {
-		key, ok := v[i].(string)
-		if !ok {
-			panic(fmt.Sprintf("dt.M: v[%d] not a string: %v", i, v[i]))
+		var key string
+		if s, ok := v[i].(string); ok {
+			key = s
+		} else if s, ok := v[i].(fmt.Stringer); ok {
+			key = s.String()
+		} else {
+			panic(fmt.Sprintf("dt.M: v[%d] not a string or fmt.Stringer: %v (type: %T)", i, v[i], v[i]))
 		}
 		val, ok := v[i+1].(types.AttributeValue)
 		if !ok {
-			panic(fmt.Sprintf("dt.M: v[%d] not a types.AttributeValue: %v", i+1, v[i+1]))
+			panic(fmt.Sprintf("dt.M: v[%d] not a types.AttributeValue: %v (type: %T)", i+1, v[i+1], v[i+1]))
 		}
 		m[key] = val
 	}

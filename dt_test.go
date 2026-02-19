@@ -45,6 +45,23 @@ func TestM(t *testing.T) {
 	}
 }
 
+type S string
+
+func (s S) String() string {
+	return string(s)
+}
+
+func TestM_Stringer(t *testing.T) {
+	var key S = "foo"
+	got := dt.M(key, dt.S("..."))
+	out := map[string]types.AttributeValue{
+		"foo": &types.AttributeValueMemberS{Value: "..."},
+	}
+	if diff := deep.Equal(got, out); diff != nil {
+		t.Error(diff)
+	}
+}
+
 func TestS(t *testing.T) {
 	got := dt.S("test")
 	want := &types.AttributeValueMemberS{Value: "test"}
@@ -220,4 +237,3 @@ func TestL(t *testing.T) {
 		t.Error(diff)
 	}
 }
-
